@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Twoi Klienci</h1>
+    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#newClientModal">
+        Nowy Klient
+    </button>
+    <table class="table table-hover mt-4">
+        <thead>
+            <tr>
+                <th scope="col">Imię</th>
+                <th scope="col">Nazwisko</th>
+                <th scope="col">Numer dowodu</th> <!-- Dodana kolumna -->
+                <th scope="col">Kraj</th> <!-- Dodana kolumna -->
+                <th scope="col">Miasto</th>
+                <th scope="col">Ulica</th>
+                <th scope="col">Notatki</th> <!-- Dodana kolumna -->
+                <th scope="col">Akcje</th> <!-- Kolumna z akcjami -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in clients %}
+            <tr>
+                <td>{{ client.first_name }}</td>
+                <td>{{ client.last_name }}</td>
+                <td>{{ client.id_card }}</td> <!-- Dodana komórka -->
+                <td>{{ client.country }}</td> <!-- Dodana komórka -->
+                <td>{{ client.city }}</td>
+                <td>{{ client.street }}</td>
+                <td>{{ client.notes }}</td> <!-- Dodana komórka -->
+                <td>
+                    <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#editClientModal{{ client.id }}">Edytuj</button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteClientModal{{ client.id }}">Usuń</button>
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Delete Confirmation Modal -->
+{% for client in clients %}
+<div class="modal fade" id="deleteClientModal{{ client.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteClientModalLabel{{ client.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteClientModalLabel{{ client.id }}">Usuń Klienta</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Czy na pewno chcesz usunąć {{ client.first_name }} {{ client.last_name }} z bazy danych?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                <a href="{% url 'delete_client_with_id' client.id %}" class="btn btn-danger">Usuń</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for client in clients %}
+<div class="modal fade" id="editClientModal{{ client.id }}" tabindex="-1" role="dialog" aria-labelledby="editClientModalLabel{{ client.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="{% url 'edit_client' client.id %}">
+                {% csrf_token %}
+                {% with client=client %}
+                {% include 'client_form.html' %}
+            {% endwith %}
+                            <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
+                    <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+
+{% endblock %}

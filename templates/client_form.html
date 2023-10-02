@@ -1,0 +1,30 @@
+<div class="modal-body">
+    <div class="form-group">
+        <label for="first_name">Imię:</label>
+        <input type="text" class="form-control" id="first_name" name="first_name" value="{{ client.first_name|default:'' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="last_name">Nazwisko:</label>
+        <input type="text" class="form-control" id="last_name" name="last_name" value="{{ client.last_name|default:'' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="id_card">Numer dowodu:</label>
+        <input type="text" class="form-control" id="id_card" name="id_card" value="{{ client.id_card|default:'' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="country">Kraj:</label>
+        <input type="text" class="form-control" id="country" name="country" value="{{ client.country|default:'' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="city">Miasto:</label>
+        <input type="text" class="form-control" id="city" name="city" value="{{ client.city|default:'' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="street">Ulica:</label>
+        <input type="text" class="form-control" id="street" name="street" value="{{ client.street|default:'' }}" required>
+    </div>
+    <div class="form-group">
+        <label for="notes">Notatki:</label>
+        <textarea class="form-control" id="notes" name="notes" required>{{ client.notes|default:'' }}</textarea>
+    </div>
+</div>

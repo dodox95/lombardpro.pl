@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Wybierz co chcesz zrobić</h1>
+    <div class="row mt-4">
+        <div class="col-md-6 text-center mb-4">
+            <div class="card main-action-container clients">
+                <a href="{% url 'my_clients' %}" class="stretched-link"></a>
+                <div class="card-body">
+                    <h5 class="card-title">Lista Klientów</h5>
+                    <p class="card-text">Kliknij, aby zobaczyć listę klientów.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 text-center">
+            <div class="card main-action-container loans">
+                <a href="{% url 'my_loans' %}" class="stretched-link"></a>
+                <div class="card-body">
+                    <h5 class="card-title">Pożyczki</h5>
+                    <p class="card-text">Kliknij, aby zobaczyć listę pożyczek.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

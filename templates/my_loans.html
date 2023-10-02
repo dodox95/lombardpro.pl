@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Twoje Pożyczki</h1>
+    <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#newLoanModal">
+        Nowa Pożyczka
+    </button>
+    <table class="table table-hover mt-4">
+        <thead>
+            <tr>
+                <th scope="col">Numer Umowy</th>
+                <th scope="col">Klient</th>
+                <th scope="col">Precozja</th> <!-- Added this line -->
+                <th scope="col">Kwota pożyczki</th>
+                <th scope="col">Koszt przechowania</th>
+                <th scope="col">Pełna Kwota do Oddania</th>
+                <th scope="col">Termin Zawarcia umowy</th>
+                <th scope="col">Termin Spłaty</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for loan in loans %}
+            <tr>
+                <td>{{ loan.contract_number }}</td>
+                <td>{{ loan.client }}</td>
+                <td>{{ loan.precious_item }}</td> <!-- Added this line -->
+                <td>{{ loan.loan_amount }}</td>
+                <td>{{ loan.interest_rate }}%</td>
+                <td>{{ loan.current_pickup_amount }}</td>
+                <td>{{ loan.contract_date }}</td>
+                <td>{{ loan.current_due_date }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+</div>
+
+{% endblock %}
