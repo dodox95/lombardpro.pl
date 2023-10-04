@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="mb-4">
+                <strong>Menu:</strong>
+                <ul class="list-unstyled">
+                    <li><a href="/accounts/email/" class="btn btn-link">Change Email</a></li>
+                    <li><a href="/accounts/logout/" class="btn btn-link">Wyloguj się</a></li>
+                </ul>
+            </div>
+            
+            <h1>Adresy e-mail</h1>
+            <p>Poniższe adresy e-mail są powiązane z Twoim kontem:</p>
+
+            <form action="/accounts/email/" class="email_list" method="post">
+                <input type="hidden" name="csrfmiddlewaretoken" value="OtUUIBVKDncgFxozg3XLbB3Xp0M0fMVuzFKxKwqAcZJeLq7byAADQAcVZyw4Zali">
+                <fieldset class="blockLabels">
+                    <div class="form-group">
+                        <label for="email_radio_1" class="primary_email">
+                            <input id="email_radio_1" type="radio" name="email" checked="checked" value="dorianszafranski12@gmail.com">
+                            dorianszafranski12@gmail.com
+                            <span class="badge badge-success">Zweryfikowany</span>
+                            <span class="badge badge-primary">Podstawowy</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_radio_2">
+                            <input id="email_radio_2" type="radio" name="email" value="office.travilabs@gmail.com">
+                            office.travilabs@gmail.com
+                            <span class="badge badge-warning">Brak weryfikacji</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-secondary" type="submit" name="action_primary">Uczyń podstawowym</button>
+                        <button class="btn btn-secondary" type="submit" name="action_send">Prześlij ponownie wiadomość weryfikacyjną</button>
+                        <button class="btn btn-danger" type="submit" name="action_remove">Usuń</button>
+                    </div>
+                </fieldset>
+            </form>
+
+            <h2>Dodaj adres e-mail</h2>
+            <form method="post" action="/accounts/email/" class="add_email">
+                <input type="hidden" name="csrfmiddlewaretoken" value="OtUUIBVKDncgFxozg3XLbB3Xp0M0fMVuzFKxKwqAcZJeLq7byAADQAcVZyw4Zali">
+                <div class="form-group">
+                    <label for="id_email">Adres e-mail:</label>
+                    <input type="email" name="email" placeholder="Adres email" maxlength="320" required="" id="id_email" class="form-control">
+                </div>
+                <button name="action_add" type="submit" class="btn btn-primary">Dodaj e-mail</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+(function() {
+  var message = "Czy naprawdę chcesz usunąć wybrany adres e-mail?";
+  var actions = document.getElementsByName('action_remove');
+  if (actions.length) {
+    actions[0].addEventListener("click", function(e) {
+      if (! confirm(message)) {
+        e.preventDefault();
+      }
+    });
+  }
+})();
+</script>
+{% endblock %}

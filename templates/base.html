@@ -2,36 +2,35 @@
 <html lang="pl">
 
 <head>
+        {% load static %}
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twoja Aplikacja Lombard</title>
+    <link rel="icon" href="{% static 'images/pawn-shop.png' %}" type="image/png">
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    
+    <link rel="stylesheet" href="{% static 'base.css' %}">
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="/">LombardPro.pl</a>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'main' %}">Strona Główna</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'my_clients' %}">Klienci</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'my_loans' %}">Pożyczki</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    {% include 'loader.html' %}
+    {% include 'Navbar.html' %}
+
 
     <div class="container mt-4">
         {% block content %}
-        <!-- Zawartość konkretnego szablonu będzie wstawiana tutaj -->
-        {% endblock %}
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}        {% endblock %}
     </div>
+
 <!-- Modal dla Nowego Klienta -->
 <div class="modal fade" id="newClientModal" tabindex="-1" role="dialog" aria-labelledby="newClientModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -61,46 +60,6 @@
     </div>
 </div>
 
-
-<!-- Modal dla Nowej Pożyczki -->
-<div class="modal fade" id="newLoanModal" tabindex="-1" role="dialog" aria-labelledby="newLoanModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form method="post" action="{% url 'add_loan' %}">{% csrf_token %}
-                <div class="modal-header">
-                    <h5 class="modal-title" id="newLoanModalLabel">Nowa Pożyczka</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    Numer Umowy: <input type="text" name="contract_number" class="form-control" required><br>
-                    Klient: 
-                    <select name="client" class="form-control" required>
-                        {% for client in clients %}
-                            <option value="{{ client.id }}">{{ client.first_name }} {{ client.last_name }}</option>
-                        {% endfor %}
-                    </select><br>
-                    Precozja: <input type="text" name="precious_item" class="form-control" required><br> <!-- Added this line -->
-                    Kwota pożyczki: <input type="number" name="loan_amount" class="form-control" required><br>
-                    Koszt przechowania (Proszę wpisać jako wartość procentową): <input type="number" name="interest_rate" class="form-control" required><br>
-                    Pełna Kwota do Oddania: <input type="number" name="current_pickup_amount" class="form-control" required><br>
-                    Termin Zawarcia umowy: <input type="date" name="contract_date" class="form-control" required><br>
-                    Termin Spłaty: <input type="date" name="current_due_date" class="form-control" required><br>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
-                    <button type="submit" class="btn btn-primary">Zapisz Pożyczkę</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-
-
-
-
 <!-- Modal for Deleting a Client -->
 <div class="modal fade" id="deleteClientModal" tabindex="-1" role="dialog" aria-labelledby="deleteClientModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -128,10 +87,253 @@
 </div>
 
 
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Sukces</h5>
+            </div>
+            <div class="modal-body">
+                Pożyczka została dodana!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Failure Modal -->
+<div class="modal fade" id="failureModal" tabindex="-1" role="dialog" aria-labelledby="failureModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="failureModalLabel">Błąd</h5>
+            </div>
+            <div class="modal-body">
+                Nie udało się dodać pożyczki.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for New Loan -->
+<div class="modal fade" id="newLoanModal" tabindex="-1" role="dialog" aria-labelledby="newLoanModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="{% url 'add_loan' %}">{% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newLoanModalLabel">Nowa Pożyczka</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            Proszę poprawić błędy:
+                            <ul>
+                            {% for field, errors in form.errors.items %}
+                                {% for error in errors %}
+                                    <li>{{ field }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                    Numer Umowy: <input type="text" name="contract_number" class="form-control" required><br>
+                    Klient: 
+                    <select name="client" class="form-control">
+                        {% for client in clients %}
+                            <option value="{{ client.id }}">{{ client.first_name }} {{ client.last_name }}</option>
+                        {% endfor %}
+                    </select><br>
+                    Precozja: <input type="text" name="precision" class="form-control" required><br>
+                    Kwota pożyczki: <input type="number" name="loan_amount" class="form-control" required><br>
+                    Koszt przechowania: <input type="number" name="interest_rate" class="form-control" required><br>
+                    Data zawarcia umowy: <input type="date" name="contract_date" id="contractDateInput" class="form-control" required><br>
+                    Termin spłaty: 
+                    <select id="dueDateSelect" class="form-control mb-2">
+                        <option value="10">10 dni</option>
+                        <option value="20">20 dni</option>
+                        <option value="30">30 dni</option>
+                        <option value="60">60 dni</option>
+                        <option value="90">90 dni</option>
+                        <option value="custom">Wybierz datę...</option>
+                    </select>
+                    
+                    <input type="date" name="due_date" id="dueDateInput" class="form-control" required disabled>
+                                        Kwota do odbioru: <input type="number" name="pickup_amount" class="form-control" required><br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
+                    <button type="submit" class="btn btn-primary">Zapisz Pożyczkę</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successLoanModal" tabindex="-1" role="dialog" aria-labelledby="successLoanModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successLoanModalLabel">Sukces</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <i class="fas fa-check-circle fa-3x text-success mb-3"></i> <!-- This is the green checkmark icon -->
+                Pożyczka została pomyślnie dodana!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='{% url 'my_loans' %}'">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for loan in loans %}
+<!-- Modal for Editing Loan -->
+<div class="modal fade" id="editLoanModal{{ loan.id }}" tabindex="-1" role="dialog" aria-labelledby="editLoanModalLabel{{ loan.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="{% url 'edit_loan' loan.id %}">{% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editLoanModalLabel{{ loan.id }}">Edytuj Pożyczkę</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Numer Umowy: <input type="text" name="contract_number" value="{{ loan.contract_number }}" class="form-control" required><br>
+                    Klient: 
+                    <select name="client" class="form-control">
+                        {% for client in clients %}
+                            <option value="{{ client.id }}" {% if client.id == loan.client.id %}selected{% endif %}>{{ client.first_name }} {{ client.last_name }}</option>
+                        {% endfor %}
+                    </select><br>
+                    Precozja: <input type="text" name="precision" value="{{ loan.precision }}" class="form-control" required><br>
+                    Kwota pożyczki: <input type="number" name="loan_amount" value="{{ loan.loan_amount }}" class="form-control" required><br>
+                    Koszt przechowania: <input type="number" name="interest_rate" value="{{ loan.interest_rate }}" class="form-control" required><br>
+                    Data zawarcia umowy: <input type="date" name="contract_date" value="{{ loan.contract_date }}" class="form-control" required><br>
+                    Termin spłaty: <input type="date" name="due_date" value="{{ loan.due_date }}" class="form-control" required><br>
+                    Kwota do odbioru: <input type="number" name="pickup_amount" value="{{ loan.pickup_amount }}" class="form-control" required><br>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Zamknij</button>
+                    <button type="submit" class="btn btn-primary">Zapisz Zmiany</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for loan in loans %}
+<!-- Modal for Deleting Loan -->
+<div class="modal fade" id="deleteLoanModal{{ loan.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteLoanModalLabel{{ loan.id }}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form method="post" action="{% url 'delete_loan' loan.id %}">{% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteLoanModalLabel{{ loan.id }}">Usuń Pożyczkę</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle"></i> Czy na pewno chcesz usunąć tę pożyczkę?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                    <button type="submit" class="btn btn-danger">Usuń</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+ <!-- Modal for error -->
+ <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="errorModalLabel">Błąd</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Nie udało się zaktualizować profilu.
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Success Modal -->
+<div class="modal fade" id="profileUpdatedModal" tabindex="-1" role="dialog" aria-labelledby="profileUpdatedModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="profileUpdatedModalLabel">Sukces</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Profil został prawidłowo zaktualizowany.
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.level == message.tags.success %}
+            <script>
+                $(document).ready(function() {
+                    $('#profileUpdatedModal').modal('show');
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+
+  {% if messages %}
+    {% for message in messages %}
+        {% if message.level == message.tags.success %}
+            <script>
+                $(document).ready(function() {
+                    $('#successModal').modal('show');
+                });
+            </script>
+        {% elif message.level == message.tags.error %}
+            <script>
+                $(document).ready(function() {
+                    $('#errorModal').modal('show');
+                });
+            </script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+  
     <!-- Opcjonalne skrypty JavaScript dla Bootstrapa -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
     <script>
         $('#deleteClientModal').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget);
@@ -143,60 +345,126 @@
             var newAction = "{% url 'delete_client_with_id' client_id=0 %}".replace('0', clientId);
             $('#deleteForm').attr('action', newAction);
         });
-        
+    </script>   
+    <script>
+        $(document).ready(function() {
+            {% if messages %}
+            {% for message in messages %}
+            {% if message.level == message.constants.ERROR %}
+            $('#failureModal').modal('show');
+            {% elif message.level == message.constants.SUCCESS %}
+            $('#successModal').modal('show');
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        });
     </script>
-    <style>
-        .card {
-            border: none;
-            border-radius: 15px;
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-            cursor: pointer;
-            overflow: hidden;
-            background-color: #f7f9fc; /* subtelne tło dla kart */
-        }
     
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
-        }
-    
-        .card-body {
-            padding: 40px;
-        }
-    
-        .card-title {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-    
-        /* Kolory kart */
-        .main-action-container.clients {
-            background-color: #007BFF; /* Kolor tła dla karty Klientów */
-            color: white; /* Kolor tekstu dla karty Klientów */
-        }
-    
-        .main-action-container.loans {
-            background-color: #28A745; /* Kolor tła dla karty Pożyczek */
-            color: white; /* Kolor tekstu dla karty Pożyczek */
-        }
-    
-        h1.text-center {
-            font-weight: bold;
-            margin-bottom: 40px;
-        }
-    
-        /* Responsive tweaks */
-        @media (max-width: 768px) {
-            .card-body {
-                padding: 20px;
+    {% if show_success_modal %}
+    <script>
+        $(document).ready(function() {
+            $('#successLoanModal').modal('show');
+        });
+    </script>
+        
+    {% endif %}
+    <script>
+        $(window).on('load', function() {
+            $('.loader-container').fadeOut('slow');
+        });
+    </script>
+<script>
+    $('#yourClientFormId').submit(function(e) {
+        e.preventDefault();
+        $.ajax({
+            url: $(this).attr('action'),
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response.status === 'success') {
+                    // Handle success, maybe show a success message or redirect
+                } else if (response.status === 'error') {
+                    // Handle errors, maybe show them to the user
+                }
             }
-    
-            .card-title {
-                font-size: 1.4rem;
+        });
+    });
+</script>    
+<script>
+    $(document).ready(function() {
+        var today = new Date().toISOString().split('T')[0];
+        document.getElementById('contractDateInput').setAttribute('value', today);
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $('#dueDateSelect').change(function() {
+            var selectedValue = $(this).val();
+            var dueDateInput = $('#dueDateInput');
+            var loanAmountInput = $('input[name="loan_amount"]');
+            var interestRateInput = $('input[name="interest_rate"]');
+            var pickupAmountInput = $('input[name="pickup_amount"]');
+            
+            if (selectedValue === 'custom') {
+                dueDateInput.removeAttr('disabled');
+                dueDateInput.val('');
+                interestRateInput.removeAttr('disabled');
+            } else {
+                var today = new Date();
+                var newDate = new Date(today);
+                newDate.setDate(today.getDate() + parseInt(selectedValue));
+                
+                var formattedDate = newDate.toISOString().split('T')[0];
+                dueDateInput.val(formattedDate);
+                dueDateInput.attr('disabled', 'disabled');
+                
+                var interestRate = 0;
+                switch(selectedValue) {
+                    case '10': interestRate = 7; break;
+                    case '20': interestRate = 10; break;
+                    case '30': interestRate = 12; break;
+                    case '60': interestRate = 24; break;
+                    case '90': interestRate = 36; break;
+                }
+                interestRateInput.val(interestRate);
+                interestRateInput.attr('disabled', 'disabled');
             }
-        }
+            
+            var loanAmount = parseFloat(loanAmountInput.val()) || 0;
+            var pickupAmount = loanAmount + (loanAmount * (interestRate / 100));
+            pickupAmountInput.val(pickupAmount.toFixed(2));
+        });
+    });
     
-    </style>
-</body>
+</script>    
+<script>
+    $(document).ready(function() {
+        $('input[name="loan_amount"], input[name="interest_rate"]').on('input', function() {
+            var loanAmountInput = $('input[name="loan_amount"]');
+            var interestRateInput = $('input[name="interest_rate"]');
+            var pickupAmountInput = $('input[name="pickup_amount"]');
+            
+            var loanAmount = parseFloat(loanAmountInput.val()) || 0;
+            var interestRate = parseFloat(interestRateInput.val()) || 0;
+            var pickupAmount = loanAmount + (loanAmount * (interestRate / 100));
+            
+            pickupAmountInput.val(pickupAmount.toFixed(2));
+        });
+    });
+</script>        
+<script>
+    {% if messages %}
+{% for message in messages %}
+{% if message.level == message.SUCCESS %}
+<script>
+    $(document).ready(function() {
+        $('#successModal').modal('show');
+    });
+</script>
+{% endif %}
+{% endfor %}
+{% endif %}
+</script>
 
+</body>
 </html>

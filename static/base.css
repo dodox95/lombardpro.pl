@@ -1,0 +1,101 @@
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+    overflow: hidden;
+    background-color: #f7f9fc; /* subtelne tło dla kart */
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: 40px;
+}
+
+.card-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+/* Kolory kart */
+.main-action-container.clients {
+    background-color: #007BFF; /* Kolor tła dla karty Klientów */
+    color: white; /* Kolor tekstu dla karty Klientów */
+}
+
+.main-action-container.loans {
+    background-color: #28A745; /* Kolor tła dla karty Pożyczek */
+    color: white; /* Kolor tekstu dla karty Pożyczek */
+}
+
+h1.text-center {
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.4rem;
+    }
+}
+
+
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* ściemnienie tła */
+    z-index: 9999;
+}
+
+.loader-wrapper {
+    position: absolute;
+    bottom: 10%; /* położenie loadera na dole */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.loader-wrapper .spinner-border {
+    width: 4rem;
+    height: 4rem;
+}
+
+.action-buttons {
+    display: inline-flex;
+    flex-direction: row;
+    white-space: nowrap;
+}
+td .action-buttons {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    white-space: nowrap !important;
+}
+.navbar, .dropdown-menu {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.dropdown-menu {
+    max-width: 95vw !important; /* Ustawia maksymalną szerokość na 95% widoku */
+}
+.dropdown-menu {
+    right: 5vw !important; /* Odsuwa menu od prawej krawędzi o 5% widoku */
+}
+
+
+.modal-content {
+    background-color: black !important;
+}
