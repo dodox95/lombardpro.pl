@@ -12,8 +12,8 @@ def check_git_identity(scope='global'):
     return False
 
 def set_git_identity(scope='global'):
-    email = input("Podaj swój email: ")
-    name = input("Podaj swoje imię: ")
+    email = input("Enter your email: ")
+    name = input("Enter your name: ")
 
     os.system(f"git config --{scope} user.email '{email}'")
     os.system(f"git config --{scope} user.name '{name}'")
@@ -22,26 +22,27 @@ def initialize_repo():
     os.system("git init")
     os.system("git add .")
     os.system("git commit -m 'initial commit'")
-    repo_link = input("Podaj link do repozytorium z GitHuba: ")
+    repo_link = input("Enter the link to your GitHub repository: ")
     os.system(f"git remote add origin {repo_link}")
     os.system("git push origin master")
 
 def main():
-    # Sprawdź czy folder jest repozytorium
+    # Check if the directory is a git repository
     if not os.path.exists(".git"):
-        choice = input("To nie jest repozytorium Git. Czy chcesz je zainicjować? (Tak/Nie) ").lower()
-        if choice == 'tak':
+        choice = input("This is not a Git repository. Do you want to initialize it? (Yes/No) ").lower()
+        if choice == 'yes':
             initialize_repo()
         else:
             return
 
-    # Konfiguracja tożsamości
-    scope_choice = input("Czy chcesz skonfigurować tożsamość dla bieżącego repozytorium czy globalnie? (bieżące/globalnie): ").lower()
-    scope = '' if scope_choice == 'bieżące' else 'global'
+    # Identity configuration
+    print("Do you want to configure identity for the current repository or globally?")
+    scope_choice = input("1. Global\n2. Local\nChoice: ")
+    scope = '' if scope_choice == '2' else 'global'
     if not check_git_identity(scope):
         set_git_identity(scope)
     else:
-        print(f"Tożsamość {scope_choice} została już skonfigurowana.")
+        print(f"The {scope} identity is already configured.")
 
     commit_message = input("Enter the update title: ")
 
@@ -54,13 +55,13 @@ def main():
     print("Committing changes...")
     result = os.system(f'git commit -m "{commit_message}"')
     if result != 0:
-        print("Commit nie powiódł się.")
+        print("Commit failed.")
         return
 
     print("Pushing changes to GitHub...")
     result = os.system("git push origin master")
     if result != 0:
-        print("Push nie powiódł się.")
+        print("Push failed.")
         return
 
     print("Update completed!")
