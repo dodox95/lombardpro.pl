@@ -24,9 +24,17 @@ class Loan(models.Model):
     loan_amount = models.DecimalField(max_digits=10, decimal_places=2)
     interest_rate = models.DecimalField(max_digits=5, decimal_places=2)  # np. 5.25 dla 5.25%
     pickup_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    status = models.BooleanField(default=False)  # False dla nieodebranej, True dla odebranej
     comments = models.TextField(null=True, blank=True)
     user = models.ForeignKey(User, null=True, on_delete=models.CASCADE, related_name='loans')
+    STATUS_CHOICES = (
+        ('active', 'Aktywna'),
+        ('extended', 'Przedłużona'),
+        ('picked_up', 'Odebrana'),
+        ('deadline_passed', 'Termin minął'),
+        ('inactive', 'Nieaktywna'),
+    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+
 
     def current_due_date(self):
         latest_extension = self.extensions.order_by('-new_due_date').first()
@@ -35,6 +43,10 @@ class Loan(models.Model):
     def current_pickup_amount(self):
         total_extension_fee = sum(ext.extension_fee for ext in self.extensions.all())
         return self.pickup_amount + total_extension_fee
+    
+    class Meta:
+        verbose_name = "Loan"
+        verbose_name_plural = "Loans"
 
 class Extension(models.Model):
     loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name='extensions')

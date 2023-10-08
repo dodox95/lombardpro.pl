@@ -6,42 +6,18 @@
         Nowa Pożyczka
     </button>
 
-    <!-- Formularz wyszukiwania -->
-    <form method="get" class="mb-3">
-        <div class="input-group">
-            <div class="col-md-6 col-sm-12 p-0">
-                <input type="text" class="form-control" placeholder="Wyszukaj..." name="q" value="{{ request.GET.q }}">
-            </div>
-            <div class="col-md-4 col-sm-12 p-0">
-                <select name="filter" class="form-control filter-select">
-                    <option value="contract_number" {% if request.GET.filter == "contract_number" %}selected{% endif %}>Numer Umowy</option>
-                    <option value="client" {% if request.GET.filter == "client" %}selected{% endif %}>Klient</option>
-                    <option value="precision" {% if request.GET.filter == "precision" %}selected{% endif %}>Precozja</option>
-                    <option value="loan_amount" {% if request.GET.filter == "loan_amount" %}selected{% endif %}>Kwota pożyczki</option>
-                    <option value="interest_rate" {% if request.GET.filter == "interest_rate" %}selected{% endif %}>Koszt przechowania</option>
-                    <option value="current_pickup_amount" {% if request.GET.filter == "current_pickup_amount" %}selected{% endif %}>Pełna Kwota do Oddania</option>
-                    <option value="contract_date" {% if request.GET.filter == "contract_date" %}selected{% endif %}>Termin Zawarcia umowy</option>
-                    <option value="current_due_date" {% if request.GET.filter == "current_due_date" %}selected{% endif %}>Termin Spłaty</option>
-                </select>
-            </div>
-            <div class="col-md-2 col-sm-12 p-0">
-                <button class="btn btn-outline-secondary" type="submit">Wyszukaj</button>
-            </div>
-        </div>
-    </form>
-
     <div class="table-responsive">
         <table class="table table-hover mt-4">
             <thead>
                 <tr>
-                    <th scope="col">Numer Umowy</th>
-                    <th scope="col">Klient</th>
-                    <th scope="col">Precozja</th>
-                    <th scope="col">Kwota pożyczki</th>
-                    <th scope="col">Koszt przechowania</th>
-                    <th scope="col">Pełna Kwota do Oddania</th>
-                    <th scope="col">Termin Zawarcia umowy</th>
-                    <th scope="col">Termin Spłaty</th>
+                    <th scope="col">Contract Number</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Contract Date</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Interest Rate</th>
+                    <th scope="col">Pickup Amount</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Akcje</th>
                 </tr>
             </thead>
@@ -50,12 +26,21 @@
                 <tr>
                     <td>{{ loan.contract_number }}</td>
                     <td>{{ loan.client }}</td>
-                    <td>{{ loan.precision }}</td>
-                    <td>{{ loan.loan_amount }}</td>
-                    <td>{{ loan.interest_rate }}%</td>
-                    <td>{{ loan.current_pickup_amount }}</td>
                     <td>{{ loan.contract_date }}</td>
                     <td>{{ loan.current_due_date }}</td>
+                    <td>{{ loan.loan_amount }}</td>
+                    <td>{{ loan.interest_rate }}</td>
+                    <td>{{ loan.current_pickup_amount }}</td>
+                    <td>
+                        <form method="post" action="{% url 'your_view_name_to_change_status' loan.id %}">
+                            {% csrf_token %}
+                            <select name="loan_status" onchange="this.form.submit()">
+                                {% for value, display_name in loan.STATUS_CHOICES %}
+                                <option value="{{ value }}" {% if loan.status == value %}selected{% endif %}>{{ display_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </td>
                     <td>
                         <div class="action-buttons">
                             <button type="button" class="btn btn-success mr-1" data-toggle="modal" data-target="#editLoanModal{{ loan.id }}"><i class="fas fa-edit"></i></button>

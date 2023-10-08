@@ -29,10 +29,16 @@ class LoanAdmin(admin.ModelAdmin):
     inlines = [ExtensionInline]
 
     def colored_status(self, obj):
-        if obj.status:
-            return format_html('<span style="color: green;">Received</span>')
-        else:
-            return format_html('<span style="color: red;">Not received</span>')
+        color_map = {
+            'active': 'green',
+            'extended': 'blue',
+            'picked_up': 'grey',
+            'deadline_passed': 'red',
+            'inactive': 'orange',
+        }
+        color = color_map.get(obj.status, 'black')  # Default to 'black' if status isn't in color_map
+        return format_html('<span style="color: {};">{}</span>', color, obj.get_status_display())
+
 
     colored_status.admin_order_field = 'status'
     colored_status.short_description = 'Status'
@@ -44,6 +50,7 @@ class LoanAdmin(admin.ModelAdmin):
     def current_pickup_amount_display(self, obj):
         return obj.current_pickup_amount()
     current_pickup_amount_display.short_description = 'Current Pickup Amount'
+
 
 @admin.register(Extension)
 class ExtensionAdmin(admin.ModelAdmin):

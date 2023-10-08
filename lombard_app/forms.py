@@ -9,4 +9,7 @@ class ClientForm(forms.ModelForm):
 class LoanForm(forms.ModelForm):
     class Meta:
         model = Loan
-        fields = ['contract_number', 'client', 'precision', 'contract_date', 'due_date', 'loan_amount', 'interest_rate', 'pickup_amount', 'comments']
+        fields = ['contract_number', 'client', 'precision', 'contract_date', 'due_date', 'loan_amount', 'interest_rate', 'pickup_amount', 'status', 'comments']
+        widgets = {
+            'status': forms.Select(choices=Loan.STATUS_CHOICES)
+        }

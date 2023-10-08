@@ -205,3 +205,13 @@ from django.shortcuts import render
 def email_view(request):
     # Możesz dodać dodatkową logikę tutaj, jeśli jest potrzebna
     return render(request, 'email.html')
+
+def change_loan_status(request, loan_id):
+    if request.method == 'POST':
+        loan = get_object_or_404(Loan, id=loan_id)
+        new_status = request.POST.get('loan_status')
+        if new_status in [choice[0] for choice in Loan.STATUS_CHOICES]:
+            loan.status = new_status
+            loan.save()
+    return redirect('the_view_name_to_redirect_to')
+

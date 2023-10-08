@@ -25,7 +25,10 @@ urlpatterns = [
     path('edit_loan/<int:loan_id>/', views.edit_loan, name='edit_loan'),
     path('edit_loan/<int:loan_id>/', views.edit_loan, name='edit_loan'),
     path('user_profile/', views.user_profile, name='user_profile'),
-    path('accounts/email/', views.email_view, name='email'),]
+    path('accounts/email/', views.email_view, name='email'),
+    path('change_loan_status/<int:loan_id>/', views.change_loan_status, name='your_view_name_to_change_status'),
+    
+    ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
